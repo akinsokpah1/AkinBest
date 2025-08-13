@@ -1,0 +1,61 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AkinBest — Next-Gen TikTok-Style App (PWA)</title>
+  <meta name="description" content="AkinBest — an installable, offline-capable, next-level TikTok-inspired video sharing app." />
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#d946ef" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #feed { scroll-snap-type: y mandatory; }
+    .snap { scroll-snap-align: start; }
+    input[type=file] { display: none; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 8px; }
+  </style>
+</head>
+<body class="bg-black text-white min-h-screen flex flex-col">
+  <header class="p-4 bg-black/80 backdrop-blur flex items-center justify-between border-b border-white/10">
+    <h1 class="text-xl font-bold text-fuchsia-500">AkinBest</h1>
+    <input id="search" type="text" placeholder="Search..." class="bg-white/10 px-3 py-1 rounded" />
+    <label for="videoFile" class="bg-fuchsia-600 px-3 py-1 rounded cursor-pointer">Upload</label>
+    <input id="videoFile" type="file" accept="video/*" />
+  </header>  <main id="feed" class="flex-1 overflow-y-auto">
+    <!-- Videos injected here -->
+  </main>  <script>
+    const feed = document.getElementById('feed');
+    const videoFile = document.getElementById('videoFile');
+
+    function addVideo(src, caption) {
+      const container = document.createElement('div');
+      container.className = 'snap p-4';
+      const video = document.createElement('video');
+      video.src = src;
+      video.controls = true;
+      video.className = 'w-full rounded-xl';
+      const cap = document.createElement('p');
+      cap.textContent = caption;
+      container.appendChild(video);
+      container.appendChild(cap);
+      feed.appendChild(container);
+    }
+
+    videoFile.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const url = URL.createObjectURL(file);
+      addVideo(url, file.name);
+    });
+
+    // Example starter video
+    addVideo('https://www.w3schools.com/html/mov_bbb.mp4', 'Sample video');
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').then(() => {
+        console.log('Service Worker registered');
+      }).catch(err => console.error('SW registration failed', err));
+    }
+  </script></body>
+</html>
